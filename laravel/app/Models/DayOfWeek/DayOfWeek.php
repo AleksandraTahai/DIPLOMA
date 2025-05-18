@@ -1,9 +1,9 @@
 <?php
 
-namespace app\Models\DayOfWeek;
+namespace App\Models\DayOfWeek;
 
-use app\Models\BaseModel;
-use app\Models\Habits\Habit;
+use App\Models\BaseModel;
+use App\Models\Habits\Habit;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
