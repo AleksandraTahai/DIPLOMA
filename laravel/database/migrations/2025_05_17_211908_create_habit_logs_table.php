@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignId('day_id')->constrained('day_of_weeks');
             $table->date('date');
             $table->integer('is_done')->default(0);
-            $table->timestamps();
+            $table->timestamp('create_time')->nullable();
+            $table->timestamp('update_time')->nullable();
         });
     }
 

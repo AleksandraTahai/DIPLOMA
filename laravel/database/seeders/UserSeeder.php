@@ -12,9 +12,6 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()
-            ->count(3)
-            ->habits(rand(1, 3))
-            ->create();
+        //
     }
 }

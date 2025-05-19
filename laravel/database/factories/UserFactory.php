@@ -45,6 +45,6 @@ class UserFactory extends Factory
     }
 
     public function habits(int $count = 3): static{
-        return $this->has(Habit::factory()->count($count));
+        return $this->has(Habit::factory()->count($count), 'habits');
     }
 }

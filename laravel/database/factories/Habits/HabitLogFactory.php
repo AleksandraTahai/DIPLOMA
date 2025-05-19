@@ -4,6 +4,7 @@ namespace Database\Factories\Habits;
 
 use App\Models\Habits\Habit;
 use App\Models\Habits\HabitLog;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,7 @@ class HabitLogFactory extends Factory
     public function definition(): array
     {
         return [
-
+            //
         ];
     }
 }

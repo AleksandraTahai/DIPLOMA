@@ -14,13 +14,14 @@ class HabitSeeder extends Seeder
     public function run(): void
     {
         $user = User::factory()->create();
-         Habit::factory()
+
+        Habit::factory()
             ->count(4)
             ->create([
                 'user_id' => $user->id,
             ])
             ->each(function (Habit $habit) {
-                $habit->days()->attach([0, 4, 6]);
+                $habit->days()->attach([0, 4]);
             });
 
     }
