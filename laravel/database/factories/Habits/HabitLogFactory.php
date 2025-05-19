@@ -1,13 +1,15 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Habits;
 
+use App\Models\Habits\Habit;
+use App\Models\Habits\HabitLog;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\app\Models\DayOfWeek\DayOfWeek>
+ * @extends Factory<HabitLog>
  */
-class DayOfWeekFactory extends Factory
+class HabitLogFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +19,7 @@ class DayOfWeekFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+
         ];
     }
 }

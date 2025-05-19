@@ -1,11 +1,12 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Habits;
 
+use App\Models\Habits\Habit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\app\Models\Habits\Habit>
+ * @extends Factory<Habit>
  */
 class HabitFactory extends Factory
 {
@@ -17,7 +18,10 @@ class HabitFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => $this->faker->word(),
+            'description' => $this->faker->sentence(),
+            'reminder_time' => $this->faker->time('H:i:s'),
+            'user_id' => 1,
         ];
     }
 }

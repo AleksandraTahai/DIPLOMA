@@ -1,16 +1,16 @@
 <?php
 
-namespace app\Models\Habits;
+namespace App\Models\Habits;
 
-use app\Models\BaseModel;
-use app\Models\DayOfWeek\DayOfWeek;
+use App\Models\BaseModel;
+use App\Models\DayOfWeek\DayOfWeek;
+use database\factories\Habits\HabitLogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HabitLog extends BaseModel
 {
-    /** @use HasFactory<\Database\Factories\HabitLogFactory> */
+    /** @use HasFactory<HabitLogFactory> */
     use HasFactory;
 
     public function habit(): BelongsTo
