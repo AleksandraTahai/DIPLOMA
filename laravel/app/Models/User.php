@@ -4,13 +4,14 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Habits\Habit;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- *
+ * 
  *
  * @property int $id
  * @property string $name
@@ -36,6 +37,8 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Habit> $habit
  * @property-read int|null $habit_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Habit> $habits
+ * @property-read int|null $habits_count
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -80,5 +83,17 @@ class User extends Authenticatable
     public function habits(): HasMany
     {
         return $this->hasMany(Habit::class);
+    }
+
+    protected function name(): Attribute
+    {
+        return new Attribute(
+            set: fn($value) => ucwords($value),
+        );
+    }
+
+    public function getAllHabbits()
+    {
+        return $this->habits()->get();
     }
 }

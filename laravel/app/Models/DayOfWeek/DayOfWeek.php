@@ -9,13 +9,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
- *
+ * 
  *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \app\Models\Habits\Habit> $habits
  * @property-read int|null $habits_count
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DayOfWeek newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DayOfWeek newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|DayOfWeek query()
+ * @property int $id
+ * @property string $day
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DayOfWeek whereDay($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|DayOfWeek whereId($value)
  * @mixin \Eloquent
  */
 class DayOfWeek extends BaseModel
