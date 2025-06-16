@@ -7,8 +7,8 @@ use Illuminate\Support\Collection;
 
 interface EntityServiceInterface
 {
-    public function getAll(): Collection;
-    public function getById(int $id): ?BaseModel;
+    public function getAll(int $userId): Collection;
+    public function getById(int $habitId, int $userId): ?BaseModel;
 
     public function create(array $data): ?BaseModel;
 
