@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property string $name
@@ -35,7 +35,7 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Habit> $habit
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Habit> $habits
  * @property-read int|null $habit_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Habit> $habits
  * @property-read int|null $habits_count

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Services\Habits;
+namespace App\Services\Habits;
 
 use App\Contracts\Services\Habits\HabitServiceInterface;
 use App\Models\Habits\Habit;
@@ -46,9 +46,13 @@ class HabitService implements HabitServiceInterface
 
     }
 
-    public function update(int $id, array $data): bool
+    public function update(int $habitId, array $data): ?Habit
     {
-        $habit = $this->builder()->find($id);
+        $habit = $this->builder()->find($habitId);
+
+        if (!$habit) {
+            return null;
+        }
 
         $habit->update([
             'title' => $data['title'],
@@ -62,15 +66,19 @@ class HabitService implements HabitServiceInterface
         return $habit;
     }
 
-    public function deleteById($id): bool
+    public function delete(int $habitId, int $userId): bool
     {
-        return Habit::find($id)->delete();
+        $query = $this->builder()
+            ->where('id', $habitId)
+            ->where('user_id', $userId);
+
+        return (bool)$query->delete();
     }
 
     public function generateLogs(Habit $habit): void
     {
         $start = now();
-        $end = now()->addWeek();
+        $end = now()->addMonth();
         $dayIds = $habit->days->pluck('id')->toArray();
 
         $current = $start->copy();
@@ -78,7 +86,7 @@ class HabitService implements HabitServiceInterface
             if (in_array($current->dayOfWeek, $dayIds)) {
                 HabitLog::firstOrCreate([
                     'habit_id' => $habit->id,
-                    'date' => $current->toDateString(),
+                    'date' => $current,
                 ], [
                     'day_id' => $current->dayOfWeek,
                     'is_done' => 0,
@@ -89,8 +97,8 @@ class HabitService implements HabitServiceInterface
     }
 
     public function updateMissedLogs(): void
-    {   $habit = $this->builder();
-        $habit->where('date', '<', now()->toDateString())
+    {
+        HabitLog::where('date', '<', now())
             ->where('is_done', 0)
             ->update(['is_done' => 2]);
     }

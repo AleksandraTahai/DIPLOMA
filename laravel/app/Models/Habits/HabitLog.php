@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Illuminate\Support\Carbon|null $create_time
  * @property \Illuminate\Support\Carbon|null $update_time
  * @property-read DayOfWeek $day
- * @property-read \App\Models\Habits\Habit $habit
+ * @property-read \App\Models\Habits\Habit $habits
  * @method static \Database\Factories\Habits\HabitLogFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|HabitLog newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|HabitLog newQuery()

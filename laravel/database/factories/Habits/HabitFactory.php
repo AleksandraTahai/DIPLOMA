@@ -44,7 +44,7 @@ class HabitFactory extends Factory
                         'habit_id' => $habit->id,
                         'day_id' => $dayOfWeek,
                         'date' => $date,
-                        'is_done' => $date->isPast() ? rand(1,2) : 0,  //1-done,2-missed,0-neutral
+                        'is_done' => $date->isPast() ? rand(1, 2) : 0,  //1-done,2-missed,0-neutral
                     ]);
 
                 }

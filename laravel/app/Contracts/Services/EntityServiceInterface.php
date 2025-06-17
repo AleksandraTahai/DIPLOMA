@@ -3,6 +3,7 @@
 namespace App\Contracts\Services;
 
 use App\Models\BaseModel;
+use App\Models\Habits\Habit;
 use Illuminate\Support\Collection;
 
 interface EntityServiceInterface
@@ -12,7 +13,7 @@ interface EntityServiceInterface
 
     public function create(array $data): ?BaseModel;
 
-    public function update(int $id, array $data): bool;
-    public function deleteById(int $id): bool;
+    public function update(int $habitId, array $data): ?BaseModel;
+    public function delete(int $habitId, int $userId): bool;
 
 }

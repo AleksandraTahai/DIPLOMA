@@ -7,4 +7,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::resource('habit', HabitController::class);
+Route::resource('habits', HabitController::class);

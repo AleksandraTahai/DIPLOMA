@@ -11,8 +11,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('habit_day', function (Blueprint $table) {
-            $table->integer('habit_id');
-            $table->integer('day_id');
+            $table->foreignId('habit_id')->constrained('habits')->onDelete('cascade');
+            $table->foreignId('day_id')->constrained('day_of_weeks')->onDelete('cascade');
             $table->primary(['habit_id', 'day_id']);
         });
     }
