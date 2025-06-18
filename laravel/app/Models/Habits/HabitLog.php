@@ -38,6 +38,13 @@ class HabitLog extends BaseModel
     /** @use HasFactory<HabitLogFactory> */
     use HasFactory;
 
+    protected $fillable = [
+        'habit_id',
+        'day_id',
+        'date',
+        'is_done',
+    ];
+
     public function habit(): BelongsTo
     {
         return $this->belongsTo(Habit::class, 'habit_id');
@@ -48,7 +55,8 @@ class HabitLog extends BaseModel
         return $this->belongsTo(DayOfWeek::class, 'day_id');
     }
 
-    public function isOverdue(){
+    public function isOverdue()
+    {
         return $this->date < now() && $this->is_done == 2;
     }
 }

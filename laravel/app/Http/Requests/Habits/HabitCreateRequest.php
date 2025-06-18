@@ -18,9 +18,9 @@ class HabitCreateRequest extends BaseRequest
         return [
             'title' => ['required', 'string', 'min:3', 'max:255'],
             'description' => ['nullable', 'string', 'max:150'],
-            'reminder_time' => ['nullable', 'date:H:i'],
-            'days' => ['required', 'array', 'min:1'],
-            'days.*' => ['integer', 'between:0,6'],
+            'reminder_time' => ['nullable'],
+            'day_ids' => ['required', 'array', 'min:1'],
+            'day_ids.*' => ['integer', 'between:0,6'],
         ];
     }
 }

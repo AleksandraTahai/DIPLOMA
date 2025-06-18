@@ -41,7 +41,6 @@ class HabitService implements HabitServiceInterface
 
         $habit->days()->sync($data['day_ids'] ?? []);
         $this->generateLogs($habit);
-
         return $habit;
 
     }
@@ -61,6 +60,7 @@ class HabitService implements HabitServiceInterface
         ]);
 
         $habit->days()->sync($data['day_ids'] ?? []);
+        $this->cleanUpLogs($habit);
         $this->generateLogs($habit);
 
         return $habit;
@@ -86,7 +86,7 @@ class HabitService implements HabitServiceInterface
             if (in_array($current->dayOfWeek, $dayIds)) {
                 HabitLog::firstOrCreate([
                     'habit_id' => $habit->id,
-                    'date' => $current,
+                    'date' => $current->format('Y-m-d'),
                 ], [
                     'day_id' => $current->dayOfWeek,
                     'is_done' => 0,
@@ -95,6 +95,17 @@ class HabitService implements HabitServiceInterface
             $current->addDay();
         }
     }
+
+    protected function cleanUpLogs(Habit $habit): void
+    {
+        $validDayIds = $habit->days->pluck('id')->toArray();
+
+        HabitLog::where('habit_id', $habit->id)
+            ->whereNotIn('day_id', $validDayIds)
+            ->where('date', '>=', now())
+            ->delete();
+    }
+
 
     public function updateMissedLogs(): void
     {

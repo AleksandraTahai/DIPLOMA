@@ -18,7 +18,7 @@ class HabitController extends Controller
      */
     public function index()
     {
-        $habits = $this->habitService->getAll(1);
+        $habits = $this->habitService->getAll(2);
         return view('habits.index', compact('habits'));
     }
 
@@ -36,6 +36,7 @@ class HabitController extends Controller
     public function store(HabitCreateRequest $request)
     {
         $data = $request->validated();
+        $data['user_id'] = 2;
         $habit = $this->habitService->create($data);
         return redirect()->route('habits.index');
     }
@@ -43,9 +44,9 @@ class HabitController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(int $id)
+    public function show(string $id)
     {
-        $habit = $this->habitService->getById($id, 1);
+        $habit = $this->habitService->getById($id, 2);
         return view('habits.show', compact('habit'));
     }
 
@@ -54,7 +55,7 @@ class HabitController extends Controller
      */
     public function edit(int $id)
     {
-        $habit = $this->habitService->getById($id, 1);
+        $habit = $this->habitService->getById($id, 2);
         return view('habits.edit', compact('habit'));
     }
 
@@ -62,8 +63,7 @@ class HabitController extends Controller
      * Update the specified resource in storage.
      */
     public function update(HabitCreateRequest $request, int $id)
-    {
-        $data = $request->validated();
+    {   $data = $request->validated();
         $this->habitService->update($id, $data);
         return redirect()->route('habits.index');
     }
@@ -73,7 +73,7 @@ class HabitController extends Controller
      */
     public function destroy(int $id)
     {
-        $this->habitService->delete($id, auth()->id());
+        $this->habitService->delete($id, 2);
         return redirect()->route('habits.index');
     }
 }

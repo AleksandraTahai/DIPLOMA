@@ -14,8 +14,6 @@
         <label>Время напоминания:</label>
         <input type="time" name="reminder_time"><br>
 
-        <input type="hidden" name="user_id" value="1">
-
 
         <label>Дни недели:</label><br>
         @for ($i = 0; $i < 7; $i++)

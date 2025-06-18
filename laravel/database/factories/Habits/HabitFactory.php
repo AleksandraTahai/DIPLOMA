@@ -43,7 +43,7 @@ class HabitFactory extends Factory
                     HabitLog::factory()->create([
                         'habit_id' => $habit->id,
                         'day_id' => $dayOfWeek,
-                        'date' => $date,
+                        'date' => $date->format('Y-m-d'),
                         'is_done' => $date->isPast() ? rand(1, 2) : 0,  //1-done,2-missed,0-neutral
                     ]);
 

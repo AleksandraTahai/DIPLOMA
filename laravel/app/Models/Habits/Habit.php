@@ -47,6 +47,7 @@ class Habit extends BaseModel
 {
     /** @use HasFactory<HabitFactory> */
     use HasFactory;
+    protected $fillable = ['title', 'description', 'reminder_time', 'user_id'];
 
     public function user(): BelongsTo
     {
