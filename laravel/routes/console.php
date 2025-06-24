@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('habits:update-missed')->dailyAt('2:00');
+Schedule::command('app:send-habit-reminders')->everyMinute();
