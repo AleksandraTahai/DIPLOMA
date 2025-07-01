@@ -6,6 +6,7 @@ use App\Http\Requests\Habits\HabitCreateRequest;
 use App\Models\Habits\Habit;
 use App\Services\Habits\HabitService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HabitController extends Controller
 {
@@ -18,8 +19,9 @@ class HabitController extends Controller
      */
     public function index()
     {
-        $habits = $this->habitService->getAll(2);
-        return view('habits.index', compact('habits'));
+        $userId = Auth::id();
+        $habits = $this->habitService->getAll($userId);
+        return response()->json($habits);
     }
 
     /**
@@ -36,9 +38,12 @@ class HabitController extends Controller
     public function store(HabitCreateRequest $request)
     {
         $data = $request->validated();
-        $data['user_id'] = 2;
+
+        $data['user_id'] = Auth::id();
+
         $habit = $this->habitService->create($data);
-        return redirect()->route('habits.index');
+
+        return response()->json($habit, 201);
     }
 
     /**
@@ -46,8 +51,13 @@ class HabitController extends Controller
      */
     public function show(string $id)
     {
-        $habit = $this->habitService->getById($id, 2);
-        return view('habits.show', compact('habit'));
+        $habit = $this->habitService->getById($id, Auth::id());
+
+        if (!$habit) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+
+        return response()->json($habit);
     }
 
     /**
@@ -63,9 +73,16 @@ class HabitController extends Controller
      * Update the specified resource in storage.
      */
     public function update(HabitCreateRequest $request, int $id)
-    {   $data = $request->validated();
-        $this->habitService->update($id, $data);
-        return redirect()->route('habits.index');
+    {
+        $data = $request->validated();
+
+        $habit = $this->habitService->update($id, $data);
+
+        if (!$habit) {
+            return response()->json(['message' => 'Not found'], 404);
+        }
+
+        return response()->json($habit);
     }
 
     /**
@@ -73,7 +90,7 @@ class HabitController extends Controller
      */
     public function destroy(int $id)
     {
-        $this->habitService->delete($id, 2);
-        return redirect()->route('habits.index');
+        $success = $this->habitService->delete($id, Auth::id());
+        return response()->json(['success' => $success]);
     }
 }
