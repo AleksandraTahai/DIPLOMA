@@ -1,0 +1,215 @@
+<template>
+  <div>
+    <div class="calendar_nav">
+      <div class="arrow_left" @click="prevWeek">
+          <div></div>
+      </div>
+      <p class="dates">{{ formatDate(startOfWeek) }} - {{ formatDate(endOfWeek) }}</p>
+      <div class="arrow_right" @click="nextWeek">
+        <div></div>
+      </div>
+    </div>
+
+    <div class="habit_list">
+      <div class="habit_header">
+        <div class="habit-name-header">Привычка</div>
+          <div class="habit-days-header">
+            <div
+              v-for="date in weekDates"
+              :key="date.toDateString()"
+              class="day-cell"
+            >
+              <div>{{ date.toLocaleDateString('ru-RU', { weekday: 'short' }) }}</div>
+               <small>{{ date.getDate() }}.{{ date.getMonth() + 1 }}</small>
+            </div>  
+        </div>
+      </div>
+    </div>
+
+      <HabitRow
+        v-for="habit in habits"
+        :key="habit.id"
+        :habit="habit"
+        :weekDates="weekDates"
+        :token="token"
+        @delete="deleteHabit(habit.id)"
+      />
+
+      <HabitForm @create="addHabit" />
+    </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue'
+
+import HabitRow from './HabitRow.vue'
+import HabitForm from './HabitForm.vue'
+
+import { useAuthStore } from '@/stores/auth'
+
+const { token } = useAuthStore()
+const today = new Date()
+const currentStart = ref(getStartOfWeek(today))
+
+const habits = ref([
+  {
+  id: 1,
+  name: 'Вода',
+  description: 'sjdjdjdj',
+  createdAt: '2025-06-28',
+  days: [1, 2, 3, 4, 5],
+  logs: {}
+},
+  { id: 2, name: 'Чтение', days: [0, 6], logs: {} },
+])
+
+function getStartOfWeek(date) {
+  const d = new Date(date)
+  const diff = d.getDate() - d.getDay()
+  return new Date(d.setDate(diff))
+}
+
+const startOfWeek = computed(() => currentStart.value)
+
+const endOfWeek = computed(() => {
+  const d = new Date(startOfWeek.value)
+  return new Date(d.setDate(d.getDate() + 6))
+})
+
+const weekDates = computed(() => {
+  const dates = []
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startOfWeek.value)
+    d.setDate(d.getDate() + i)
+    dates.push(d)
+  }
+  return dates
+})
+
+function nextWeek() {
+  const d = new Date(startOfWeek.value)
+  d.setDate(d.getDate() + 7)
+  currentStart.value = d
+}
+
+function prevWeek() {
+  const d = new Date(startOfWeek.value)
+  d.setDate(d.getDate() - 7)
+  currentStart.value = d
+}
+
+function addHabit(habit) {
+  habits.value.push({ ...habit, id: Date.now(), logs: {} })
+}
+
+function deleteHabit(id) {
+  habits.value = habits.value.filter(h => h.id !== id)
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString('ru-RU')
+}
+</script>
+
+<style scoped>
+
+.calendar_nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.dates{
+  font-size: 25px;
+  font-weight: 800;
+  color: #2a6d92;
+}
+.habit_list {
+  background-color: #ffffffba;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.habit_header {
+  display: flex;
+  background: #3ca2d954;
+  font-weight: bold;
+}
+.habit-name-header {
+  width: 200px;
+  padding: 0.5rem;
+}
+.habit-days-header,
+.habit-days-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); 
+  flex: 1;
+}
+.day-cell,
+.icon-cell {
+  text-align: center;
+  padding: 4px;
+}
+.arrow_right, .arrow_left {
+    cursor: pointer;
+    position: relative;
+    width: 80px;
+    height: 50px;
+    margin: 20px;
+}
+.arrow_right div, .arrow_left div {
+    position: relative;
+    top: 31px;
+    width: 42px;
+    height: 5px;
+    background-color: #337AB7;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
+    left:0;
+    display: block;
+}
+.arrow_right div::after, .arrow_left div::after  {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 5px;
+    top: -7px;
+    right: -7px;
+    background-color: #337AB7;
+    transform: rotate(45deg);
+}
+.arrow_left div::after{
+    top: -7px;
+    left: -7px;
+    background-color: #337AB7;
+    transform: rotate(-45deg);
+}
+.arrow_right div::before,.arrow_left div::before{
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 5px;
+    top: 7px;
+    right: -7px;
+    background-color: #337AB7;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
+    transform: rotate(-45deg);
+}
+.arrow_left div::before{
+    transform: rotate(45deg);
+    top: 7px;
+    left: -7px;
+}
+.arrow_right:hover,.arrow_left:hover {
+    animation: arrows 1s linear infinite;
+}
+@keyframes arrows {
+    0% {
+        left:0;
+    }
+    50% {
+        left:9px;
+    }
+    100% {
+        left:0;
+    }
+}
+</style>
