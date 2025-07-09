@@ -1,8 +1,8 @@
 <template>
   <button
-    class="icon-button"
-    :disabled="disabled || status === -1 || loading"
-    @click="toggle"
+      class="icon-button"
+      :disabled="disabled || status === -1 || loading"
+      @click="toggle"
   >
     <img :src="iconSrc" alt="status icon" />
   </button>
@@ -22,7 +22,7 @@ const props = defineProps({
     required: true
   },
   date: {
-    type: String, // формат YYYY-MM-DD
+    type: String,
     required: true
   },
   token: {
@@ -36,19 +36,23 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['updated'])
-
 const loading = ref(false)
 
 async function toggle() {
-  if (props.status === -1 || loading.value) return
+  if (props.status === -1 || loading.value || props.disabled) return
 
   const newStatus = props.status === 1 ? 0 : 1
 
-    await api.updateHabit(props.habitId, {
-    status: newStatus,
-    date: props.date
-  }, props.token)
-
+  try {
+    loading.value = true
+    await api.updateHabitStatus(props.habitId, props.date, newStatus, props.token)
+    emit('updated', newStatus)
+  } catch (err) {
+    console.error('Ошибка при обновлении статуса привычки:', err)
+    alert('Ошибка при обновлении. Возможно, вы не авторизованы.')
+  } finally {
+    loading.value = false
+  }
 }
 
 const iconSrc = computed(() => {

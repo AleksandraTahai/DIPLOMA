@@ -24,7 +24,7 @@ class HabitFactory extends Factory
         return [
             'title' => $this->faker->word(),
             'description' => $this->faker->sentence(),
-            'reminder_time' => $this->faker->time('H:i:s'),
+            'reminder_time' => $this->faker->time('H:i'),
             'user_id' => User::factory(),
         ];
     }

@@ -1,22 +1,36 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api', 
-  withCredentials: true,
+  baseURL: 'http://127.0.0.1:8000/api',
+  withCredentials: false, // JWT не требует cookies
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  }
 })
 
 export default {
   register(data) {
-    return api.post('/register', data)
+    return api.post('/register', {
+      name: data.name,
+      email: data.email,
+      password: data.password
+    })
   },
+
   login(data) {
-    return api.post('/login', data)
+    return api.post('/login', {
+      email: data.email,
+      password: data.password
+    })
   },
+
   getUser(token) {
     return api.get('/user', {
       headers: { Authorization: `Bearer ${token}` }
     })
   },
+
   logout(token) {
     return api.post('/logout', null, {
       headers: { Authorization: `Bearer ${token}` }
@@ -29,14 +43,14 @@ export default {
     })
   },
 
-  addHabit(habit, token) {
-    return api.post('/habits', habit, {
+  addHabit(habitData, token) {
+    return api.post('/habits', habitData, {
       headers: { Authorization: `Bearer ${token}` }
     })
   },
 
-  updateHabit(id, habit, token) {
-    return api.put(`/habits/${id}`, habit, {
+  updateHabit(id, habitData, token) {
+    return api.put(`/habits/${id}`, habitData, {
       headers: { Authorization: `Bearer ${token}` }
     })
   },
@@ -47,9 +61,12 @@ export default {
     })
   },
 
-  updateHabit(id, habitData, token) {
-    return api.put(`/habits/${id}`, habitData, {
+  updateHabitStatus(habitId, date, status, token) {
+    return api.post(`/habits/${habitId}/log`, {
+      date: date,
+      status: status
+    }, {
       headers: { Authorization: `Bearer ${token}` }
     })
-}
+  }
 }

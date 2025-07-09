@@ -55,9 +55,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import {ref} from 'vue'
 import api from '@/api/api'
-import { useAuthStore } from '@/stores/auth'
+import {useAuthStore} from '@/stores/auth'
 
 const emit = defineEmits(['created'])
 const auth = useAuthStore()
@@ -75,12 +75,31 @@ const newHabit = ref({
 
 const errorMessage = ref('')
 
+function resetForm() {
+  newHabit.value = {
+    name: '',
+    description: '',
+    days: [],
+    reminder: ''
+  }
+  isOpen.value = false
+  errorMessage.value = ''
+}
+
 async function handleSubmit() {
   if (!newHabit.value.name.trim()) return
 
   try {
-    const response = await api.addHabit(newHabit.value, auth.token)
-    emit('created', response.data) // успех — возвращаем привычку вверх
+    const payload = {
+      title: newHabit.value.name,
+      description: newHabit.value.description,
+      reminder_time: newHabit.value.reminder,
+      day_ids: newHabit.value.days
+    }
+
+    const response = await api.addHabit(payload, auth.token)
+
+    emit('created', response.data)
     resetForm()
   } catch (err) {
     console.error('Ошибка при добавлении привычки:', err)
@@ -91,13 +110,8 @@ async function handleSubmit() {
 function cancel() {
   resetForm()
 }
-
-function resetForm() {
-  newHabit.value = { name: '', description: '', days: [], reminder: '' }
-  isOpen.value = false
-  errorMessage.value = ''
-}
 </script>
+
 
 <style scoped>
 

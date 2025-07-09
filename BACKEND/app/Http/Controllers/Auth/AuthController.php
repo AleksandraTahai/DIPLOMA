@@ -3,22 +3,19 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AuthRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
-    {
-        $fields = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string',
-        ]);
+    public function register(AuthRequest $request)
+    {   $fields = $request->validated();
 
         $user = User::create([
             'name' => $fields['name'],
@@ -53,6 +50,11 @@ class AuthController extends Controller
         Auth::logout();
 
         return response()->json(['message' => 'Logged out']);
+    }
+
+    public function user()
+    {
+        return response()->json(Auth::user());
     }
 
 }

@@ -10,9 +10,31 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App',
+<script setup>
+import { useAuthStore } from '@/stores/auth'
+import { useRouter, useRoute } from 'vue-router'
+import { onMounted, watch } from 'vue'
+
+const auth = useAuthStore()
+const router = useRouter()
+const route = useRoute()
+
+onMounted(() => {
+  checkAccess()
+})
+
+watch(() => route.path, () => {
+  checkAccess()
+})
+
+function checkAccess() {
+  if (!auth.isAuthenticated && route.meta.requiresAuth) {
+    router.replace('/auth')
+  }
+
+  if (auth.isAuthenticated && route.meta.guestOnly) {
+    router.replace('/habits')
+  }
 }
 </script>
 

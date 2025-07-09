@@ -1,4 +1,3 @@
-<!-- src/components/SignInForm.vue -->
 <template>
   <form @submit.prevent="submitLogin" class="form">
     <h2>Вход</h2>
@@ -48,8 +47,6 @@ async function submitLogin() {
   }
 }
 </script>
-
-
 
 <style scoped>
 .form {

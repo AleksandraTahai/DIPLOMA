@@ -1,11 +1,10 @@
-<!-- src/pages/LoginPage.vue -->
 <script setup>
 import { ref, computed } from 'vue'
 
 import SignInForm from '@/components/SignInForm.vue'
 import RegistrationForm from '@/components/RegistrationForm.vue'
 
-const currentComponent = ref('SignInForm')
+const currentComponent = ref('RegistrationForm')
 
 function toggleComponent() {
   currentComponent.value = isSignInForm.value ? 'RegistrationForm' : 'SignInForm'

@@ -29,7 +29,6 @@ class HabitService implements HabitServiceInterface
             ->first();
     }
 
-
     public function create(array $data): ?Habit
     {
         $habit = Habit::create([
@@ -65,6 +64,25 @@ class HabitService implements HabitServiceInterface
 
         return $habit;
     }
+
+    public function updateLog(int $habitId, array $data): HabitLog
+    {
+        $habit = $this->builder()->findOrFail($habitId);
+
+        $log = $habit->logs()->firstOrCreate(
+            ['date' => $data['date']],
+            ['is_done' => $data['is_done']]
+        );
+
+        if ($log->is_done !== $data['is_done']) {
+            $log->update(['is_done' => $data['is_done']]);
+        }
+
+        return $log;
+    }
+
+
+
 
     public function delete(int $habitId, int $userId): bool
     {

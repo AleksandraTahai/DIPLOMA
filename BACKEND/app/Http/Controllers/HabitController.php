@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Habits\HabitCreateRequest;
-use App\Models\Habits\Habit;
 use App\Services\Habits\HabitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -93,4 +92,23 @@ class HabitController extends Controller
         $success = $this->habitService->delete($id, Auth::id());
         return response()->json(['success' => $success]);
     }
+
+    public function updateLog(Request $request, int $id)
+    {
+        $data = $request->validate([
+            'date' => 'required|date',
+            'status' => 'required|integer|in:0,1',
+        ]);
+
+        $data['is_done'] = $data['status'];
+        unset($data['status']);
+
+        $log = $this->habitService->updateLog($id, $data);
+
+        return response()->json([
+            'message' => 'Статус обновлён',
+            'log' => $log,
+        ]);
+    }
+
 }

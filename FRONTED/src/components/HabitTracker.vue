@@ -1,67 +1,52 @@
 <template>
   <div>
     <div class="calendar_nav">
-      <div class="arrow_left" @click="prevWeek">
-          <div></div>
-      </div>
+      <div class="arrow_left" @click="prevWeek"><div></div></div>
       <p class="dates">{{ formatDate(startOfWeek) }} - {{ formatDate(endOfWeek) }}</p>
-      <div class="arrow_right" @click="nextWeek">
-        <div></div>
-      </div>
+      <div class="arrow_right" @click="nextWeek"><div></div></div>
     </div>
 
     <div class="habit_list">
       <div class="habit_header">
         <div class="habit-name-header">Привычка</div>
-          <div class="habit-days-header">
-            <div
-              v-for="date in weekDates"
-              :key="date.toDateString()"
-              class="day-cell"
-            >
-              <div>{{ date.toLocaleDateString('ru-RU', { weekday: 'short' }) }}</div>
-               <small>{{ date.getDate() }}.{{ date.getMonth() + 1 }}</small>
-            </div>  
+        <div class="habit-days-header">
+          <div v-for="date in weekDates" :key="date.toDateString()" class="day-cell">
+            <div>{{ date.toLocaleDateString('ru-RU', { weekday: 'short' }) }}</div>
+            <small>{{ date.getDate() }}.{{ date.getMonth() + 1 }}</small>
+          </div>
         </div>
       </div>
-    </div>
 
       <HabitRow
-        v-for="habit in habits"
-        :key="habit.id"
-        :habit="habit"
-        :weekDates="weekDates"
-        :token="token"
-        @delete="deleteHabit(habit.id)"
+          v-for="habit in habits"
+          :key="habit.id"
+          :habit="habit"
+          :weekDates="weekDates"
+          :token="token"
+          @delete="deleteHabit(habit.id)"
+          @update="updateHabit"
       />
 
-      <HabitForm @create="addHabit" />
+      <HabitForm @created="addHabit" />
     </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { storeToRefs } from 'pinia'
+import api from '@/api/api'
 
 import HabitRow from './HabitRow.vue'
 import HabitForm from './HabitForm.vue'
 
-import { useAuthStore } from '@/stores/auth'
+const auth = useAuthStore()
+const { token } = storeToRefs(auth)
 
-const { token } = useAuthStore()
 const today = new Date()
 const currentStart = ref(getStartOfWeek(today))
-
-const habits = ref([
-  {
-  id: 1,
-  name: 'Вода',
-  description: 'sjdjdjdj',
-  createdAt: '2025-06-28',
-  days: [1, 2, 3, 4, 5],
-  logs: {}
-},
-  { id: 2, name: 'Чтение', days: [0, 6], logs: {} },
-])
+const habits = ref([])
 
 function getStartOfWeek(date) {
   const d = new Date(date)
@@ -98,18 +83,53 @@ function prevWeek() {
   currentStart.value = d
 }
 
-function addHabit(habit) {
-  habits.value.push({ ...habit, id: Date.now(), logs: {} })
-}
-
-function deleteHabit(id) {
-  habits.value = habits.value.filter(h => h.id !== id)
+async function fetchHabits() {
+  try {
+    const response = await api.getHabits(token.value)
+    habits.value = response.data
+  } catch (error) {
+    console.error('Ошибка загрузки привычек:', error)
+  }
 }
 
 function formatDate(date) {
   return date.toLocaleDateString('ru-RU')
 }
+
+function addHabit(newHabit) {
+  habits.value.push(newHabit)
+}
+
+async function deleteHabit(habitId) {
+  try {
+    await api.deleteHabit(habitId, auth.token)
+    habits.value = habits.value.filter(habit => habit.id !== habitId)
+  } catch (error) {
+    console.error('Ошибка удаления:', error)
+    alert('Не удалось удалить привычку.')
+  }
+}
+
+
+async function updateHabit(updated) {
+  try {
+    await api.updateHabit(updated.id, {
+      title: updated.title,
+      description: updated.description,
+      days: updated.days.map(d => d.id || d)
+    }, auth.token)
+
+    const index = habits.value.findIndex(h => h.id === updated.id)
+    if (index !== -1) habits.value[index] = updated
+  } catch (error) {
+    console.error('Ошибка обновления:', error)
+    alert('Не удалось обновить привычку.')
+  }
+}
+
+onMounted(fetchHabits)
 </script>
+
 
 <style scoped>
 

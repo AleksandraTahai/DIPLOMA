@@ -1,4 +1,3 @@
-
 <template>
   <form @submit.prevent="submitRegister" class="form">
     <h2>Регистрация</h2>
@@ -35,11 +34,13 @@
 import { ref } from 'vue'
 import api from '@/api/api'
 import { useAuthStore } from '@/stores/auth'
+import {useRouter} from "vue-router";
 
 const name = ref('')
 const email = ref('')
 const password = ref('')
 const passwordConfirm = ref('')
+const router = useRouter()
 
 const authStore = useAuthStore()
 
@@ -54,14 +55,14 @@ async function submitRegister() {
       name: name.value,
       email: email.value,
       password: password.value,
-      password_confirmation: passwordConfirm.value
     })
 
-    // Проверяем токен в ответе
     const token = response.data.token
+
     if (token) {
-      authStore.setToken(token)  // сохраняем токен
+      authStore.setToken(token)
       alert('Регистрация успешна!')
+      router.push('/')
     } else {
       alert('Токен не получен после регистрации')
     }
@@ -72,12 +73,7 @@ async function submitRegister() {
     alert('Ошибка при регистрации')
   }
 }
-
-
-
 </script>
-
-
 
 <style scoped>
 .form {
