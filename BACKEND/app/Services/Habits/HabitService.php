@@ -17,7 +17,7 @@ class HabitService implements HabitServiceInterface
 
     public function getAll(int $userId): Collection
     {
-        return $this->builder()->with('days')->where('user_id', $userId)->get();
+        return $this->builder()->with(['days', 'logs'])->where('user_id', $userId)->get();
     }
 
     public function getById(int $habitId, int $userId): ?Habit
@@ -80,9 +80,6 @@ class HabitService implements HabitServiceInterface
 
         return $log;
     }
-
-
-
 
     public function delete(int $habitId, int $userId): bool
     {

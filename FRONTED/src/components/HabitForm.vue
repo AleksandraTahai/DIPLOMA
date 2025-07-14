@@ -59,20 +59,16 @@ import {ref} from 'vue'
 import api from '@/api/api'
 import {useAuthStore} from '@/stores/auth'
 
-const emit = defineEmits(['created'])
 const auth = useAuthStore()
-
 const isOpen = ref(false)
-
 const daysOfWeek = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
-
 const newHabit = ref({
   name: '',
   description: '',
   days: [],
   reminder: ''
 })
-
+const emit = defineEmits(['created'])
 const errorMessage = ref('')
 
 function resetForm() {
@@ -100,6 +96,7 @@ async function handleSubmit() {
     const response = await api.addHabit(payload, auth.token)
 
     emit('created', response.data)
+
     resetForm()
   } catch (err) {
     console.error('Ошибка при добавлении привычки:', err)

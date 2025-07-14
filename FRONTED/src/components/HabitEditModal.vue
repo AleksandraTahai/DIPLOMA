@@ -3,7 +3,7 @@
     <div class="modal">
       <h2>Редактировать привычку</h2>
       <input
-        v-model="name"
+        v-model="title"
         placeholder="Название привычки"
         class="input"
       />
@@ -28,16 +28,18 @@
 
 <script setup>
 import { ref } from 'vue'
-import api from '@/api/api' 
-import { useAuthStore } from '@/stores/auth' 
+import api from '@/api/api'
+import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps({
   initialHabit: Object
 })
+console.log(props.initialHabit)
+
 const emit = defineEmits(['updated', 'close'])
 
-const name = ref(props.initialHabit.name)
+const title = ref(props.initialHabit.title)
 const description = ref(props.initialHabit.description || '')
 const days = ref([...props.initialHabit.days])
 const weekdays = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
@@ -46,23 +48,33 @@ const authStore = useAuthStore()
 const { token } = storeToRefs(authStore)
 
 async function save() {
-  if (!name.value.trim()) return
+  if (!title.value.trim()) return
 
   const updatedHabit = {
-    name: name.value.trim(),
+    id: props.initialHabit.id,
+    title: title.value.trim(),
     description: description.value.trim(),
-    days: [...days.value]
+    day_ids: days.value.map(d => typeof d === 'object' ? d.id : d)
   }
 
   try {
-    await api.updateHabit(props.initialHabit.id, updatedHabit, token.value)
-    emit('updated', updatedHabit) // можно также передать ID, если нужно
+
+    await api.updateHabit(updatedHabit.id, updatedHabit, token.value)
+
+    emit('updated', {
+      ...props.initialHabit,
+      title: updatedHabit.title,
+      description: updatedHabit.description,
+      days: days.value.map(d => (typeof d === 'object' ? d : { id: d }))
+    })
+
     close()
   } catch (err) {
     console.error('Ошибка при обновлении привычки:', err)
     alert('Не удалось обновить привычку.')
   }
 }
+
 
 function close() {
   emit('close')

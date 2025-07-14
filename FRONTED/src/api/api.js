@@ -43,6 +43,12 @@ export default {
     })
   },
 
+  getHabit(id, token) {
+    return api.get(`/habits/${id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+  },
+
   addHabit(habitData, token) {
     return api.post('/habits', habitData, {
       headers: { Authorization: `Bearer ${token}` }

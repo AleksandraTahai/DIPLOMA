@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: ./BACKEND
+      dockerfile: Dockerfile
+    container_name: habit-backend
+    volumes:
+      - ./BACKEND:/var/www
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/database/database.sqlite
+    networks:
+      - habit-network
+
+  frontend:
+    build:
+      context: ./FRONTED
+      dockerfile: Dockerfile
+    container_name: habit-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - habit-network
+
+networks:
+  habit-network:
+    driver: bridge

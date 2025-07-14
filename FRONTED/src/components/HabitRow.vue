@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import HabitIcon from './HabitIcon.vue'
 import HabitEditModal from './HabitEditModal.vue'
 import api from '@/api/api'
@@ -52,40 +52,38 @@ const emit = defineEmits(['update', 'delete'])
 const isModalOpen = ref(false)
 const auth = useAuthStore()
 
-function confirmDelete() {
-  if (confirm(`Вы уверены, что хотите удалить привычку "${props.habit.title}"?`)) {
-    emit('delete', props.habit.id)
+onMounted(() => {
+  if (Array.isArray(props.habit.logs)) {
+    const logsMap = {}
+    for (const log of props.habit.logs) {
+      logsMap[log.date] = log.is_done
+    }
+    props.habit.logs = logsMap
   }
-}
+})
 
 function formatDate(date) {
   return date.toISOString().split('T')[0]
 }
 
-function isPast(date) {
-  const today = new Date()
-  return date < new Date(today.getFullYear(), today.getMonth(), today.getDate())
-}
-
 function isActiveDay(date) {
-  const dayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
-  const dayName = dayNames[date.getDay()]
-  return props.habit.days?.some(d => d.day === dayName)
+  const dayOfWeek = date.getDay()
+  const activeDays = props.habit.days.map(d => d.day)
+  const weekdayMap = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+  return activeDays.includes(weekdayMap[dayOfWeek])
 }
-
 
 function getStatus(date) {
   const key = formatDate(date)
   const log = props.habit.logs?.[key]
 
   const currentDay = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  const now = new Date()
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
   const createdAtRaw = props.habit.createdAt || props.habit.create_time
   const createdAtDate = new Date(createdAtRaw)
   const createdAt = new Date(createdAtDate.getFullYear(), createdAtDate.getMonth(), createdAtDate.getDate())
-
-  const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
 
   const active = isActiveDay(date)
 
@@ -93,6 +91,7 @@ function getStatus(date) {
   if (currentDay < createdAt) return -1
   if (log === 1) return 1
   if (log === 0) return 0
+  if (log === 2) return 2
   if (log === undefined && currentDay < today) return 2
   return 0
 }
@@ -107,18 +106,14 @@ function canChangeStatus(date) {
   )
 }
 
-async function updateStatus(date, newStatus) {
-  if (!canChangeStatus(date)) return
-
+function updateStatus(date, newStatus) {
   const key = formatDate(date)
-  if (!props.habit.logs) props.habit.logs = {}
   props.habit.logs[key] = newStatus
+}
 
-  try {
-    await api.updateHabitStatus(props.habit.id, key, newStatus, auth.token)
-  } catch (err) {
-    console.error('Ошибка при обновлении статуса:', err.response?.data || err.message)
-    alert('Не удалось сохранить статус. Проверьте соединение или авторизацию.')
+function confirmDelete() {
+  if (confirm(`Вы уверены, что хотите удалить привычку "${props.habit.title}"?`)) {
+    emit('delete', props.habit.id)
   }
 }
 
@@ -127,11 +122,12 @@ function saveEdit(updatedHabit) {
     ...props.habit,
     title: updatedHabit.title,
     description: updatedHabit.description,
-    days: [...updatedHabit.days].sort((a, b) => a.id - b.id)
+    days: [...updatedHabit.days].sort()
   })
   isModalOpen.value = false
 }
 </script>
+
 
 <style scoped>
 .habit-row {

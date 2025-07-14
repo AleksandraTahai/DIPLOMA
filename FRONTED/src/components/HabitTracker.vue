@@ -96,8 +96,13 @@ function formatDate(date) {
   return date.toLocaleDateString('ru-RU')
 }
 
-function addHabit(newHabit) {
-  habits.value.push(newHabit)
+async function addHabit(newHabitData) {
+  try {
+    const { data: fullHabit } = await api.getHabit(newHabitData.id, token.value)
+    habits.value.push(fullHabit)
+  } catch (error) {
+    console.error('Ошибка при добавлении привычки:', error)
+  }
 }
 
 async function deleteHabit(habitId) {
@@ -109,27 +114,25 @@ async function deleteHabit(habitId) {
     alert('Не удалось удалить привычку.')
   }
 }
-
-
 async function updateHabit(updated) {
   try {
     await api.updateHabit(updated.id, {
       title: updated.title,
       description: updated.description,
-      days: updated.days.map(d => d.id || d)
+      day_ids: updated.days.map(d => d.id || d)  // важно: Laravel ждёт day_ids
     }, auth.token)
 
+    const { data: freshHabit } = await api.getHabit(updated.id, token.value)
     const index = habits.value.findIndex(h => h.id === updated.id)
-    if (index !== -1) habits.value[index] = updated
+    if (index !== -1) habits.value[index] = freshHabit
   } catch (error) {
-    console.error('Ошибка обновления:', error)
+    console.error('Ошибка обновления привычки:', error)
     alert('Не удалось обновить привычку.')
   }
 }
 
 onMounted(fetchHabits)
 </script>
-
 
 <style scoped>
 
