@@ -27,12 +27,15 @@ The final project of the course!
 **1. Настройка бэкенда (Laravel)**
 
 ```bash
+cd DIPLOMA/
 cd BACKEND/
 composer install
 cp .env.example .env
-touch database/database.sqlite
+touch database/database.sqlite (виндоус - New-Item .\database\database.sqlite -ItemType File)
 php artisan key:generate
 php artisan migrate
+php artisan db:seed
+php artisan jwt:secret
 php artisan serve
 ```
 Бэкенд будет доступен по адресу: [http://localhost:8000](http://localhost:8000)
@@ -40,6 +43,7 @@ php artisan serve
 **2. Настройка фронтенда (Vue.js)**
 
 ```bash
+cd DIPLOMA/
 cd FRONTED/
 npm install
 npm run dev
